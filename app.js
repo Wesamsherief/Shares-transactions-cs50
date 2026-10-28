@@ -1,4 +1,3 @@
-// Example helper for managing state in browser localStorage
 const DB = {
     getUsers: () => JSON.parse(localStorage.getItem("finance_users")) || [],
     saveUsers: (users) => localStorage.setItem("finance_users", JSON.stringify(users)),
@@ -20,3 +19,18 @@ const DB = {
         DB.saveUsers(users);
     }
 };
+async function lookup(symbol) {
+    try {
+        const response = await fetch(`https://finance.cs50.io/quote?symbol=${symbol.toUpperCase()}`);
+        if (!response.ok) return null;
+        const data = await response.json();
+        return {
+            name: data.companyName,
+            price: data.latestPrice,
+            symbol: symbol.toUpperCase()
+        };
+    } catch (error) {
+        console.error("Error fetching quote:", error);
+        return null;
+    }
+}
